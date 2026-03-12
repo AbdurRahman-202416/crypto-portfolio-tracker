@@ -31,7 +31,7 @@ export const CoinCard = ({ coin }: CoinCardProps) => {
         <div className="flex justify-between items-start mb-6">
           <Link href={`/coin/${coin.id}`} className="flex items-center gap-4">
             <div className="relative w-12 h-12 bg-white dark:bg-gray-800 rounded-full p-2 shadow-sm group-hover:scale-110 transition-transform duration-500">
-              <Image src={coin.image} alt={coin.name} fill className="object-cover rounded-full p-1" />
+              <Image src={coin.image} alt={coin.name} fill sizes="48px" className="object-cover rounded-full p-1" />
             </div>
             <div>
               <h3 className="font-bold text-lg text-gray-900 dark:text-gray-100 group-hover:text-primary dark:group-hover:text-primary-light transition-colors line-clamp-1">

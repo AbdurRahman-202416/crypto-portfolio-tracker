@@ -55,7 +55,7 @@ export default function CoinDetailPage({ params }: { params: Promise<{ id: strin
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-10 relative z-10">
           <div className="flex items-center gap-6">
             <div className="relative w-20 h-20 bg-white dark:bg-gray-800 rounded-2xl p-3 shadow-xl shadow-primary/10 rotate-3">
-              <Image src={coin.image.large} alt={coin.name} fill className="object-cover rounded-2xl p-2 -rotate-3" />
+              <Image src={coin.image.large} alt={coin.name} fill sizes="80px" className="object-cover rounded-2xl p-2 -rotate-3" />
             </div>
             <div>
               <div className="flex items-center gap-3 mb-2">
