@@ -28,32 +28,39 @@ export default function Home() {
   const filteredData = data?.filter(coin => filter === 'all' || isFavorite(coin.id)) || [];
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+    <div className="space-y-10 animate-in fade-in duration-500 max-w-7xl mx-auto">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative">
+        <div className="relative z-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary dark:text-primary-light text-sm font-medium mb-4">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary dark:bg-primary-light opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary dark:bg-primary-light"></span>
+            </span>
+            Live Updates
+          </div>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gradient mb-2 tracking-tight">
             Market Overview
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">Live cryptocurrency prices and market metrics.</p>
+          <p className="text-gray-500 dark:text-gray-400 text-lg max-w-md">Real-time cryptocurrency prices, volumes, and market metrics.</p>
         </div>
         
-        <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-lg w-full md:w-auto">
+        <div className="flex glass-card p-1 rounded-xl w-full md:w-auto relative z-10">
           <button
             onClick={() => setFilter('all')}
-            className={`flex-1 md:flex-none px-6 py-2 rounded-md text-sm font-medium transition-all ${
+            className={`flex-1 md:flex-none px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 ${
               filter === 'all' 
-                ? 'bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-sm' 
-                : 'text-gray-500 hover:text-gray-900 dark:hover:text-gray-100'
+                ? 'bg-primary dark:bg-primary-light text-white shadow-md shadow-primary/20' 
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800'
             }`}
           >
             All Coins
           </button>
           <button
             onClick={() => setFilter('favorites')}
-            className={`flex-1 md:flex-none px-6 py-2 rounded-md text-sm font-medium transition-all ${
+            className={`flex-1 md:flex-none px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 ${
               filter === 'favorites' 
-                ? 'bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-sm' 
-                : 'text-gray-500 hover:text-gray-900 dark:hover:text-gray-100'
+                ? 'bg-primary dark:bg-primary-light text-white shadow-md shadow-primary/20' 
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800'
             }`}
           >
             Favorites

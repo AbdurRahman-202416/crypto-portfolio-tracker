@@ -44,62 +44,119 @@ export const PortfolioTable = () => {
   }, 0);
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-end">
-        <div>
-          <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Total Balance</h2>
-          <p className="text-4xl font-bold text-gray-900 dark:text-white">
+    <div className="space-y-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 p-6 glass-card rounded-3xl relative overflow-hidden">
+        {/* Decorative total balance background */}
+        <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-green-500/10 rounded-full blur-3xl pointer-events-none" />
+        
+        <div className="relative z-10">
+          <h2 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Total Balance
+          </h2>
+          <p className="text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight">
             {formatCurrency(currentTotal)}
           </p>
         </div>
-        <Button variant="danger" size="sm" onClick={clearPortfolio}>
-          Clear All
+        <Button variant="danger" size="sm" onClick={clearPortfolio} className="relative z-10 rounded-xl px-6 font-bold shadow-lg shadow-red-500/20 hover:shadow-red-500/40 transition-all hover:-translate-y-0.5">
+          <Trash2 className="w-4 h-4 mr-2 inline" /> Clear All
         </Button>
       </div>
 
-      <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
+      <div className="glass-card rounded-3xl overflow-hidden shadow-xl shadow-gray-200/20 dark:shadow-black/40">
+        {/* Mobile View (Cards) */}
+        <div className="block md:hidden divide-y divide-gray-100 dark:divide-gray-800">
+          {items.map((item) => {
+            const coinData = marketData?.find(c => c.id === item.coinId);
+            const currentPrice = coinData?.current_price ?? 0;
+            const value = currentPrice * item.quantity;
+            const percentChange = coinData?.price_change_percentage_24h ?? 0;
+            const isPositive = percentChange >= 0;
+
+            return (
+              <div key={item.id} className="p-5 flex flex-col gap-4 bg-white/50 dark:bg-gray-900/50 hover:bg-white dark:hover:bg-gray-800 transition-colors">
+                <div className="flex justify-between items-start">
+                  <Link href={`/coin/${item.coinId}`} className="flex items-center gap-3">
+                    <div className="bg-white dark:bg-gray-800 p-1.5 rounded-xl shadow-sm">
+                      <Image src={item.image} alt={item.name} width={36} height={36} className="rounded-lg" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-900 dark:text-gray-100 text-lg">{item.name}</p>
+                      <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">{item.symbol}</p>
+                    </div>
+                  </Link>
+                  <button 
+                    onClick={() => removeItem(item.id)}
+                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                <div className="flex justify-between items-end bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl">
+                  <div>
+                    <p className="text-xs font-medium text-gray-500 mb-1">Price</p>
+                    <p className="font-bold text-gray-900 dark:text-gray-100">{formatCurrency(currentPrice)}</p>
+                    <p className={`text-xs font-bold mt-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md ${isPositive ? 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400' : 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400'}`}>
+                      {isPositive ? '↑' : '↓'}{formatPercentage(Math.abs(percentChange))}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs font-medium text-gray-500 mb-1">Holdings</p>
+                    <p className="font-bold text-gray-900 dark:text-gray-100 text-lg">{formatCurrency(value)}</p>
+                    <p className="text-xs font-bold text-gray-500 uppercase">{item.quantity} {item.symbol}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Desktop View (Table) */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-800 text-xs uppercase text-gray-500 dark:text-gray-400">
-                <th className="px-6 py-4 font-medium">Asset</th>
-                <th className="px-6 py-4 font-medium">Price</th>
-                <th className="px-6 py-4 font-medium text-right">Holdings</th>
-                <th className="px-6 py-4 font-medium text-right">Actions</th>
+              <tr className="bg-gray-50/80 dark:bg-gray-800/80 border-b border-gray-200 dark:border-gray-800 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 backdrop-blur-md">
+                <th className="px-6 py-5">Asset</th>
+                <th className="px-6 py-5">Price</th>
+                <th className="px-6 py-5 text-right">Holdings</th>
+                <th className="px-6 py-5 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-800 bg-white/40 dark:bg-gray-900/40">
               {items.map((item) => {
                 const coinData = marketData?.find(c => c.id === item.coinId);
                 const currentPrice = coinData?.current_price ?? 0;
                 const value = currentPrice * item.quantity;
                 const percentChange = coinData?.price_change_percentage_24h ?? 0;
+                const isPositive = percentChange >= 0;
                 
                 return (
-                  <tr key={item.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/20 transition-colors">
-                    <td className="px-6 py-4">
-                      <Link href={`/coin/${item.coinId}`} className="flex items-center gap-3">
-                        <Image src={item.image} alt={item.name} width={32} height={32} className="rounded-full" />
+                  <tr key={item.id} className="hover:bg-white dark:hover:bg-gray-800/80 transition-all duration-300 group">
+                    <td className="px-6 py-5">
+                      <Link href={`/coin/${item.coinId}`} className="flex items-center gap-4">
+                        <div className="bg-white dark:bg-gray-800 p-2 rounded-2xl shadow-sm group-hover:scale-110 transition-transform duration-300">
+                          <Image src={item.image} alt={item.name} width={36} height={36} className="rounded-xl" />
+                        </div>
                         <div>
-                          <p className="font-semibold text-gray-900 dark:text-gray-100">{item.name}</p>
-                          <p className="text-xs text-gray-500 uppercase">{item.symbol}</p>
+                          <p className="font-bold text-gray-900 dark:text-gray-100 text-base group-hover:text-primary dark:group-hover:text-primary-light transition-colors">{item.name}</p>
+                          <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">{item.symbol}</p>
                         </div>
                       </Link>
                     </td>
-                    <td className="px-6 py-4">
-                      <p className="font-medium text-gray-900 dark:text-gray-100">{formatCurrency(currentPrice)}</p>
-                      <p className={`text-xs ${percentChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                        {percentChange >= 0 ? '+' : ''}{formatPercentage(percentChange)}
+                    <td className="px-6 py-5">
+                      <p className="font-bold text-gray-900 dark:text-gray-100 text-base">{formatCurrency(currentPrice)}</p>
+                      <p className={`text-xs font-bold mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-md ${isPositive ? 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400' : 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400'}`}>
+                        {isPositive ? '↑' : '↓'}{formatPercentage(Math.abs(percentChange))}
                       </p>
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <p className="font-semibold text-gray-900 dark:text-gray-100">{formatCurrency(value)}</p>
-                      <p className="text-xs text-gray-500">{item.quantity} {item.symbol.toUpperCase()}</p>
+                    <td className="px-6 py-5 text-right">
+                      <p className="font-bold text-gray-900 dark:text-gray-100 text-lg">{formatCurrency(value)}</p>
+                      <p className="text-xs font-bold text-gray-500 uppercase mt-1">{item.quantity} {item.symbol}</p>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-5 text-right">
                       <button 
                         onClick={() => removeItem(item.id)}
-                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors"
+                        className="p-3 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all hover:scale-110 group-hover:opacity-100 opacity-60"
                       >
                         <Trash2 className="w-5 h-5" />
                       </button>

@@ -1,63 +1,58 @@
 'use client';
 
 import Link from 'next/link';
-import { useUiStore } from '../../store/ui.store';
-import { Moon, Sun, Wallet } from 'lucide-react';
+import { Wallet } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
 export const Header = () => {
-  const { theme, toggleTheme } = useUiStore();
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
     setMounted(true);
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [theme]);
+    // Explicitly enforce light mode by removing the dark class just in case
+    document.documentElement.classList.remove('dark');
+  }, []);
 
-  // wait for mount to avoid hydration mismatch
   if (!mounted) return null;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 font-bold text-xl text-gray-900 dark:text-gray-100">
-          <Wallet className="w-6 h-6 text-blue-600 dark:text-blue-500" />
-          <span>CryptoTracker</span>
+    <header className="sticky top-0 z-50 w-full glass border-b-0 transition-all duration-300">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2 font-bold text-[22px] sm:text-xl group shrink-0">
+          <div className="p-2 hidden sm:block bg-primary dark:bg-primary-light rounded-xl shadow-lg shadow-primary/20 dark:shadow-primary-light/20 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+            <Wallet className="w-5 h-5 text-white" />
+          </div>
+          <span className="text-primary dark:text-primary-light  font-extrabold tracking-tight  ">CryptoTracker</span>
         </Link>
-        <nav className="flex items-center gap-6">
+        <nav className="flex items-center gap-4 sm:gap-6">
           <Link 
             href="/" 
-            className={`text-sm font-medium transition-colors ${
+            className={`text-sm font-medium transition-all duration-300 relative py-1 ${
               pathname === '/' 
-                ? 'text-blue-600 dark:text-blue-400 font-semibold' 
-                : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
+                ? 'text-primary dark:text-primary-light font-semibold' 
+                : 'text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light'
             }`}
           >
             Markets
+            {pathname === '/' && (
+              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-primary dark:bg-primary-light rounded-full animate-in fade-in slide-in-from-bottom-1" />
+            )}
           </Link>
           <Link 
             href="/portfolio" 
-            className={`text-sm font-medium transition-colors ${
+            className={`text-sm font-medium transition-all duration-300 relative py-1 ${
               pathname === '/portfolio' 
-                ? 'text-blue-600 dark:text-blue-400 font-semibold' 
-                : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
+                ? 'text-primary dark:text-primary-light font-semibold' 
+                : 'text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light'
             }`}
           >
             Portfolio
+            {pathname === '/portfolio' && (
+              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-primary dark:bg-primary-light rounded-full animate-in fade-in slide-in-from-bottom-1" />
+            )}
           </Link>
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            aria-label="Toggle Theme"
-          >
-            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-          </button>
         </nav>
       </div>
     </header>
